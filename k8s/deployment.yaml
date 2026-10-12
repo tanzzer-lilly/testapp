@@ -1,0 +1,39 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cats-python-testapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cats-python-testapp
+  template:
+    metadata:
+      labels:
+        app: cats-python-testapp
+    spec:
+      containers:
+        - name: testapp
+          image: YOUR_ECR_IMAGE_URI
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
